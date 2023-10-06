@@ -55,7 +55,6 @@ export const userRoutes = () => {
     
             res.status(200).json(response);
         } catch (error) {
-            // Si ocurre un error, asegúrate de no enviar una respuesta si ya se ha enviado una respuesta anteriormente.
             if (!res.headersSent) {
                 res.status(500).json({ status: "ERR", data: error.message });
             }
@@ -112,8 +111,6 @@ export const userRoutes = () => {
                 if (!foundUser) {
                     return res.status(401).send({ status: 'ERR', data: 'Usuario no encontrado' })
                 }
-                
-                /* CODIGO FER */
 
                 if (!foundUser.active) {
                     return res.status(401).send({ status: 'ERR', data: 'La cuenta está deshabilitada' })

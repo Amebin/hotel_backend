@@ -25,7 +25,6 @@ export const roomsRoutes = ()  => {
     ]    
 
     router.get('/', async (req, res) => {
-        /* CODIGO FER */
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
@@ -83,6 +82,7 @@ export const roomsRoutes = ()  => {
             if (existingReservation) {
                 return res.status(400).json({ status: 'ERR', data: 'Ya existe una reserva para esta habitación y fecha' });
             }
+
             
             if (!room.avaliableDates.includes(req.body.date)) {
                 return res.status(400).json({ status: 'ERR', data: 'La fecha no está disponible' })
