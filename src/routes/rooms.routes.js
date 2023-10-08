@@ -23,12 +23,12 @@ export const roomsRoutes = ()  => {
         body('capacity').isNumeric().withMessage('La capacidad de la habitación debe ser numérico'),
     ]    
 
-    router.get('/', async (req, res) => {
+    router.get('/', verifyToken, async (req, res) => {
         const rooms = await roomModel.find()
         res.status(200).send({ status: 'OK', data: rooms })
     })
 
-    router.get('/one/:rid', async (req, res) => {
+    router.get('/one/:rid', verifyToken, async (req, res) => {
         try {
             if (mongoose.Types.ObjectId.isValid(req.params.rid)) {
                 const room = await roomModel.findById(req.params.rid)
@@ -46,7 +46,7 @@ export const roomsRoutes = ()  => {
         }
     })    
 
-    router.put('/reserved/:rid', async (req, res) => {
+    router.put('/reserved/:rid', verifyToken, async (req, res) => {
         try {
             const room = await roomModel.findById(req.params.rid)
             if (!room) {
@@ -81,8 +81,8 @@ export const roomsRoutes = ()  => {
         }
     })
 
-   /*  verifyToken, checkRoles(['admin']), */
-    router.post('/admin', avoidConsecutiveSpaces, validateCreateFields, checkRequired(['title', 'price']), async (req, res) => {
+   /*  avoidConsecutiveSpaces,  checkRequired(['title', 'price']),validateCreateFields,*/
+    router.post('/admin', verifyToken, checkRoles(['admin']), async (req, res) => {
         if (validationResult(req).isEmpty()) {
             try {
                 const { title, price, images, description, numberRoom, tipeRoom, size, capacity } = req.body
@@ -90,14 +90,15 @@ export const roomsRoutes = ()  => {
                 if (existingRoom) {
                     return res.status(400).json({ status: 'ERR', data: 'Ya existe una habitación con ese número' }) 
                 }
-                const dateArray = getDates()
+                const limitDays = 20
+                const dateArray = getDates(limitDays)
                 const formattedDateArray = dateArray.map((date) => date.toISOString().split('T')[0])
                 
                 const newRoom = { title, price, images, description, avaliableDates: formattedDateArray, numberRoom, tipeRoom, size, capacity }
 
                 const process = await roomModel.create(newRoom)
                 
-                res.status(201).send({ status: 'Created', data: process })
+                res.status(201).send({ status: 'Created', data: process, message: dateArray })
             } catch (err) {
                 res.status(500).send({ status: 'ERR', data: err.message })
             }
@@ -106,8 +107,8 @@ export const roomsRoutes = ()  => {
         }
     })
 
-    //, verifyToken, checkRoles(['admin']), avoidConsecutiveSpaces validateCreateFields,
-    router.put('/admin/:rid', async (req, res) => {
+    // avoidConsecutiveSpaces validateCreateFields,
+    router.put('/admin/:rid', verifyToken, checkRoles(['admin']), async (req, res) => {
         try {
             const id = req.params.rid
             const updateData = req.body
