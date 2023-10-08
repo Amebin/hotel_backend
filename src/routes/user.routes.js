@@ -32,7 +32,7 @@ export const userRoutes = () => {
             .withMessage("La contraseña debe tener entre 8 y 32 caracteres"),
     ]
 
-    router.get("/", async (req, res) => {
+    router.get("/", verifyToken, checkRoles(['admin']), async (req, res) => {
         try {
             const page = parseInt(req.query.page) || 1
             const limit = parseInt(req.query.limit) || 10
@@ -58,7 +58,7 @@ export const userRoutes = () => {
     })
 
 
-    router.get('/one/:uid', async (req, res) => {
+    router.get('/one/:uid', verifyToken, checkRoles(['admin']), async (req, res) => {
         try {
             if (mongoose.Types.ObjectId.isValid(req.params.uid)) {
                 const user = await userModel.findById(req.params.uid)
@@ -117,10 +117,10 @@ export const userRoutes = () => {
                         }, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRATION })
                         return res.status(200).send({ status: 'OK', data: filterData(foundUser._doc, ['password']) })
                     } else {
-                        return res.status(401).send({ status: 'ERR', data: 'Contraseña incorrecta' })
+                        return res.status(401).send({ status: 'ERR', data: 'Email o contraseña incorrectos' })
                     }
                 } else {
-                    return res.status(401).send({ status: 'ERR', data: 'Correo electrónico incorrecto' })
+                    return res.status(401).send({ status: 'ERR', data: 'Email o contraseña incorrectos' })
                 }
             } catch (err) {
                 return res.status(500).send({ status: 'ERR', data: err.message })
@@ -131,8 +131,8 @@ export const userRoutes = () => {
         }
     })
 
-    /*  checkRoles(['admin']), */
-    router.put('/:uid', verifyToken, avoidConsecutiveSpaces, checkEmpty, async (req, res) => {
+   
+    router.put('/:uid', verifyToken, avoidConsecutiveSpaces, checkEmpty, checkRoles(['admin']),async (req, res) => {
         try {
             if (mongoose.Types.ObjectId.isValid(req.params.uid)) {
                 const foundUser = await userModel.findById(req.params.uid)
@@ -155,8 +155,8 @@ export const userRoutes = () => {
         }
     })
 
-    /*  checkRoles(['admin']), */
-    router.delete('/:uid', verifyToken, async (req, res) => {
+
+    router.delete('/:uid', verifyToken, checkRoles(['admin']), async (req, res) => {
         try {
             const id = req.params.uid
             if (mongoose.Types.ObjectId.isValid(id)) {
