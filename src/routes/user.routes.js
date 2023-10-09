@@ -127,7 +127,8 @@ export const userRoutes = () => {
             }
         } else {
             const validationErrors = validationResult(req).array()
-            return res.status(400).send({ status: 'ERR', data: validationErrors })
+            
+            return res.status(400).send({ status: 'ERR', data: validationErrors[0].msg })
         }
     })
 
