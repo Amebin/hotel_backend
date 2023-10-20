@@ -23,12 +23,12 @@ export const roomsRoutes = ()  => {
         body('capacity').isNumeric().withMessage('La capacidad de la habitación debe ser numérico'),
     ]    
 
-    router.get('/', verifyToken, async (req, res) => {
+    router.get('/', async (req, res) => {
         const rooms = await roomModel.find()
         res.status(200).send({ status: 'OK', data: rooms })
     })
 
-    router.get('/one/:rid', verifyToken, async (req, res) => {
+    router.get('/one/:rid', async (req, res) => {
         try {
             if (mongoose.Types.ObjectId.isValid(req.params.rid)) {
                 const room = await roomModel.findById(req.params.rid)
@@ -49,6 +49,7 @@ export const roomsRoutes = ()  => {
     router.put('/reserved/:rid', verifyToken, async (req, res) => {
         try {
             const room = await roomModel.findById(req.params.rid)
+            
             if (!room) {
                 return res.status(404).json({ status: 'ERR', data: 'La habitación no existe' })
             }
@@ -56,13 +57,19 @@ export const roomsRoutes = ()  => {
             if (!room.avaliableDates.includes(req.body.date)) {
                 return res.status(400).json({ status: 'ERR', data: 'La fecha no está disponible' })
             }
-    
+          
             const avaliableDates = room.avaliableDates
             const { date } = req.body
-            const startDate = new Date(avaliableDates.at(-1))
-            const dateArray = getDates(startDate)
+            const oneDay = 24 * 60 * 60 * 1000
+            const lastDate = new Date(avaliableDates.at(-1))
+            const startDate = new Date(lastDate.getTime() + oneDay)
+            const limitDays = 1
+            const dateArray = getDates(limitDays ,startDate)
+            
             const formattedDateArray = dateArray.map((date) => date.toISOString().split('T')[0])
+            
             const index = avaliableDates.indexOf(date)
+            
             if (index > -1) {
                 avaliableDates.splice(index, 1)
             }
@@ -70,12 +77,11 @@ export const roomsRoutes = ()  => {
             const newArrayDates = [ ...avaliableDates, ...formattedDateArray]
             const updateData = newArrayDates
             const uno = await roomModel.findOneAndUpdate({ _id: req.params.rid }, { $set: {avaliableDates:updateData} }, { new: true })
-            console.log(uno)
             const newReservation = { userId: req.body.id, roomId: req.params.rid, date }
             const process = await reservationModel.create(newReservation)
             //agregar fragmento de codigo que ligue el id de reserva a reservas del usuario
 
-            res.status(201).json({ status: 'Created', data: process })
+            res.status(201).json({ status: 'Created', data: { message: 'Reserva realizada correctamente', date: date } })
         } catch (err) {
             res.status(500).json({ status: 'ERR', data: err.message })
         }
