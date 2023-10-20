@@ -106,12 +106,15 @@ export const userRoutes = () => {
                 if (!foundUser) {
                     return res.status(401).send({ status: 'ERR', data: 'Usuario no encontrado' })
                 }
+                if (foundUser.active === false) {
+                    return res.status(403).send({ status: 'ERR', data: 'Acceso denegado. Su cuenta está inactiva. Comuníquese con el soporte para obtener más información.' })
+                }
 
                 if (foundUser.email === req.body.email) {
                     if (isValidPassword(foundUser, req.body.password)) {
                         foundUser._doc.token = jwt.sign({
                             uid: foundUser._id,
-                            name: foundUser.name,
+                            name: foundUser.firstName + ' ' + foundUser.lastName,
                             email: foundUser.email,
                             role: foundUser.role
                         }, process.env.TOKEN_SECRET, { expiresIn: process.env.TOKEN_EXPIRATION })
