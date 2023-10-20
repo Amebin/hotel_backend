@@ -44,13 +44,15 @@ export const userRoutes = () => {
                 .limit(limit)
 
             const totalCount = await userModel.countDocuments()
-
+            const totalPages = Math.ceil(totalCount / limit)
+            
             res.status(200).send({
                 status: "OK",
                 data: users,
                 page: page,
                 limit: limit,
-                total: totalCount
+                total: totalCount,
+                totalPages: totalPages,
             })
         } catch (error) {
             res.status(500).send({ status: "ERR", data: error.message })
