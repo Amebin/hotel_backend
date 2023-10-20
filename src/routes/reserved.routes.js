@@ -11,8 +11,9 @@ export const reservedRoutes = ()  => {
     const router = Router()
 
     router.get('/reservation', verifyToken, async (req, res) => {
-        const id = req.userId
-        const reserved = await reservationModel.find({ user: id })
+        const userId = req.loggedInUser.uid
+                
+        const reserved = await reservationModel.find({ userId: userId })
         res.status(200).send({ status: 'OK', data: reserved })       
     })
 
