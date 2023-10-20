@@ -4,6 +4,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import { roomsRoutes } from './routes/rooms.routes.js'
 import { userRoutes } from './routes/user.routes.js'
+import { reservedRoutes } from './routes/reserved.routes.js'
 
 dotenv.config()
 
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/users', userRoutes())
 app.use('/api/rooms', roomsRoutes())
+app.use('/api/reserved', reservedRoutes())
 app.all('*', (req, res) => {
     res.status(404).send({ status: 'ERR', data: 'No se encuentra el endpoint solicitado' })
 })
