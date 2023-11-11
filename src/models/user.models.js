@@ -10,8 +10,8 @@ const schema = new mongoose.Schema({
     lastName: { type: String, required: true },
     email: { type: String, require:true, trim: true },
     password: { type: String, required: true },
+    phone: { type: Number, required: true },
     role: { type: String, enum: ['admin', 'user'], default: 'user' },
-    reserved: [{ type: mongoose.Schema.Types.ObjectId, ref: 'rooms' }],
     active: { type: Boolean, default: true }
 })
 

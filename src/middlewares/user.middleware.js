@@ -2,8 +2,6 @@ import * as url from 'url'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import userModel from '../models/user.models.js'
-import { validationResult, body } from 'express-validator';
-
 
 const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
@@ -60,11 +58,6 @@ const verifyToken = (req, res, next) => {
                     return res.status(401).send({ status: 'ERR', data: 'El token no es válido' })
                 }
             }
-
-            // Si la solicitud incluye un user id en los parámetros, se verifica que coincida con el del token)
-            /* if (req.params.uid !== null && req.params.uid !== decoded.uid) {
-                return res.status(401).send({ status: 'ERR', data: 'El user id no coincide con el token' })
-            } */
             
             req.loggedInUser = decoded
             next()

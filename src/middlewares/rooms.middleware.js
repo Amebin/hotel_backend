@@ -1,4 +1,3 @@
-
 import jwt from 'jsonwebtoken'
 
 const avoidConsecutiveSpaces = (req, res, next) => {

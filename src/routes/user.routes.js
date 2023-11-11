@@ -21,6 +21,9 @@ export const userRoutes = () => {
         body("password")
             .isLength({ min: 8, max: 32 })
             .withMessage("La contraseña debe tener entre 8 y 32 caracteres"),
+        body("phone")
+            .isNumeric()
+            .withMessage("El celular debe ser de 10 digitos"),
     ]
 
     const validateLoginFields = [
