@@ -13,8 +13,7 @@ export const roomsRoutes = () => {
     const validateCreateFields = [
         body('title').isLength({ min: 2, max: 32 }).withMessage('El título debe tener entre 2 y 32 caracteres'),
         body('price').isNumeric().withMessage('El precio debe ser numérico'),
-        body('images').isArray({ min: 1, max: 100 }).withMessage('Debes proporcionar al menos una imagen'),
-        body('description').isLength({ min: 2, max: 50 }).withMessage('La descripción debe tener entre 2 y 50 caracteres'),
+        body('description').isLength({ min: 2, max: 100 }).withMessage('La descripción debe tener entre 2 y 100 caracteres'),
         body('numberRoom').isNumeric().withMessage('El número de habitación debe ser numérico'),
         body('tipeRoom').isLength({ min: 2, max: 32 }).withMessage('El tipo de habitación debe tener entre 2 y 32 caracteres'),
         body('size').isLength({ min: 2, max: 32 }).withMessage('El tamaño de la habitación debe tener entre 2 y 32 caracteres'),
