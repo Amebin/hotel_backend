@@ -1,11 +1,7 @@
 import mongoose from 'mongoose'
 import { Router } from 'express'
-
-import roomModel from '../models/rooms.models.js'
 import reservationModel from '../models/reserved.models.js'
-import { verifyToken, checkRoles, checkRequired } from '../middlewares/rooms.middleware.js'
-
-import { body, validationResult } from 'express-validator'
+import { verifyToken, checkRoles } from '../middlewares/rooms.middleware.js'
 
 export const reservedRoutes = ()  => {
     const router = Router()

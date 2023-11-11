@@ -14,5 +14,5 @@ function getDates( limitDays = 1, startDate) {
 
     return dates
 }
-//añadir current day al endpoint de reservar habitación
+
 export default getDates

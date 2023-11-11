@@ -3,7 +3,7 @@ import { Router } from 'express'
 
 import roomModel from '../models/rooms.models.js'
 import reservationModel from '../models/reserved.models.js'
-import { avoidConsecutiveSpaces, isIsoDate, verifyToken, checkRoles, checkRequired } from '../middlewares/rooms.middleware.js'
+import { avoidConsecutiveSpaces, verifyToken, checkRoles } from '../middlewares/rooms.middleware.js'
 import getDates from '../helpers/date.post.js'
 import { body, validationResult } from 'express-validator'
 
@@ -15,8 +15,6 @@ export const roomsRoutes = () => {
         body('price').isNumeric().withMessage('El precio debe ser numérico'),
         body('images').isArray({ min: 1, max: 100 }).withMessage('Debes proporcionar al menos una imagen'),
         body('description').isLength({ min: 2, max: 50 }).withMessage('La descripción debe tener entre 2 y 50 caracteres'),
-        /*  body('avaliableDates').isArray({ min: 1 }).withMessage('Debes proporcionar al menos una fecha disponible'),
-         body('avaliableDates.*').custom(isIsoDate), */
         body('numberRoom').isNumeric().withMessage('El número de habitación debe ser numérico'),
         body('tipeRoom').isLength({ min: 2, max: 32 }).withMessage('El tipo de habitación debe tener entre 2 y 32 caracteres'),
         body('size').isLength({ min: 2, max: 32 }).withMessage('El tamaño de la habitación debe tener entre 2 y 32 caracteres'),
@@ -109,8 +107,8 @@ export const roomsRoutes = () => {
         }
     })
 
-    /*  avoidConsecutiveSpaces,  checkRequired(['title', 'price']),validateCreateFields,*/
-    router.post('/admin', verifyToken, checkRoles(['admin']), async (req, res) => {
+    
+    router.post('/admin', verifyToken, avoidConsecutiveSpaces, checkRoles(['admin']), validateCreateFields, async (req, res) => {
         if (validationResult(req).isEmpty()) {
             try {
                 const { title, price, images, description, numberRoom, tipeRoom, size, capacity } = req.body
@@ -135,8 +133,8 @@ export const roomsRoutes = () => {
         }
     })
 
-    // avoidConsecutiveSpaces validateCreateFields,
-    router.put('/admin/:rid', verifyToken, checkRoles(['admin']), async (req, res) => {
+  
+    router.put('/admin/:rid', verifyToken, checkRoles(['admin']), avoidConsecutiveSpaces, async (req, res) => {
         try {
             const id = req.params.rid
             const updateData = req.body
